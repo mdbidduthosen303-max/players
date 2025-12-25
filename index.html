@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FC Unity - Football Team</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #fafafa;
+            --foreground: #1a1a1a;
+            --card: #ffffff;
+            --card-foreground: #1a1a1a;
+            --muted: #f5f5f5;
+            --muted-foreground: #737373;
+            --accent: #d4af37;
+            --accent-foreground: #1a1a1a;
+            --border: #e5e5e5;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .hero-badge-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .hero-title-accent {
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--muted-foreground);
+            max-width: 32rem;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .hero-line {
+            width: 4rem;
+            height: 1px;
+            background-color: var(--accent);
+            margin-top: 3rem;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        /* Players Section */
+        .players-section {
+            padding: 4rem 1.5rem 6rem;
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Player Cards Grid */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .players-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .players-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Player Card */
+        .player-card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .player-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .player-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .jersey-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--muted);
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .player-card:hover .jersey-number {
+            color: var(--accent);
+        }
+
+        .position-badge {
+            background-color: var(--muted);
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover .position-badge {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--accent);
+        }
+
+        .player-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.25rem;
+        }
+
+        .player-dob {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dob-icon {
+            width: 0.875rem;
+            height: 0.875rem;
+            opacity: 0.5;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 80rem;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .footer-content {
+                flex-direction: row;
+            }
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-logo {
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+
+        .footer-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .footer-copyright {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .footer-heart {
+            color: var(--accent);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animation delays for cards */
+        .player-card:nth-child(1) { animation-delay: 0.1s; }
+        .player-card:nth-child(2) { animation-delay: 0.15s; }
+        .player-card:nth-child(3) { animation-delay: 0.2s; }
+        .player-card:nth-child(4) { animation-delay: 0.25s; }
+        .player-card:nth-child(5) { animation-delay: 0.3s; }
+        .player-card:nth-child(6) { animation-delay: 0.35s; }
+        .player-card:nth-child(7) { animation-delay: 0.4s; }
+        .player-card:nth-child(8) { animation-delay: 0.45s; }
+        .player-card:nth-child(9) { animation-delay: 0.5s; }
+        .player-card:nth-child(10) { animation-delay: 0.55s; }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            <span>Est. 2025</span>
+        </div>
+        <h1 class="hero-title">
+            Blackstone <span class="hero-title-accent">United </span>FC
+        </h1>
+        <p class="hero-subtitle">
+            Excellence through unity. A team built on passion, precision, and the pursuit of greatness.
+        </p>
+        <div class="hero-line"></div>
+    </section>
+
+    <!-- Players Section -->
+    <section class="players-section">
+        <div class="section-header">
+            <p class="section-label">The Squad</p>
+            <h2 class="section-title">Our Players</h2>
+        </div>
+
+        <div class="players-grid">
+            <!-- Player 1 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/biddt.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">01</span>
+                    <span class="position-badge">Defender</span>
+                </div>
+                <h3 class="player-name">Biddut</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Dec 16, 2000
+                </p>
+            </article>
+
+            <!-- Player 2 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/ashik.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">04</span>
+                    <span class="position-badge">Defender</span>
+                </div>
+                <h3 class="player-name"> LuLu Ashiik Billah</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    July 22, 1997
+                </p>
+            </article>
+
+            <!-- Player 3 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/shajib.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">05</span>
+                    <span class="position-badge">Defender</span>
+                </div>
+                <h3 class="player-name"> Mello Mesi Shajib</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    November 8, 1996
+                </p>
+            </article>
+
+            <!-- Player 4 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/almamun.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">06</span>
+                    <span class="position-badge">Midfielder</span>
+                </div>
+                <h3 class="player-name">Sergio Al-Mamun</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    February 14, 1998
+                </p>
+            </article>
+
+            <!-- Player 5 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/avijit.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">08</span>
+                    <span class="position-badge">Midfielder</span>
+                </div>
+                <h3 class="player-name">Suarez Avijit</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    September 3, 1999
+                </p>
+            </article>
+
+            <!-- Player 6 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/nazmul.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">10</span>
+                    <span class="position-badge">Midfielder</span>
+                </div>
+                <h3 class="player-name">Antonio Nazu</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    May 28, 1997
+                </p>
+            </article>
+
+            <!-- Player 7 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/rashid.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">07</span>
+                    <span class="position-badge">Forward</span>
+                </div>
+                <h3 class="player-name">David Rashid</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    December 12, 2000
+                </p>
+            </article>
+
+            <!-- Player 8 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/talha.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">09</span>
+                    <span class="position-badge">Forward</span>
+                </div>
+                <h3 class="player-name">Michael Torres Talha</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    April 5, 1996
+                </p>
+            </article>
+
+            <!-- Player 9 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/sadman.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">11</span>
+                    <span class="position-badge">Forward</span>
+                </div>
+                <h3 class="player-name">Ryan Sadman</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    August 19, 1998
+                </p>
+            </article>
+
+            <!-- Player 10 -->
+            <article class="player-card">
+                <img style=" height: 200px; background-position: center; background-size: cover; display: flex; width: 200px; border: 3px solid rgba(128, 128, 128, 0.096); border-radius: 50%; margin-bottom: 10px;" src="/Assests/alamin.jpg" alt="">
+                <div class="card-header">
+                    <span class="jersey-number">03</span>
+                    <span class="position-badge">Goalkeeper</span>
+                </div>
+                <h3 class="player-name">Al-Amin Tanaka</h3>
+                <p class="player-dob">
+                    <svg class="dob-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    January 30, 1999
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo"></div>
+                <span class="footer-name">FC Unity</span>
+            </div>
+            <p class="footer-copyright">
+                © 2024 FC Unity. Crafted with <span class="footer-heart">♥</span> for the beautiful game.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
